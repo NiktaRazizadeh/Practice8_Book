@@ -8,6 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Practice8_Book.DataBase;
+using Practice8_Book.Models;
+using Practice8_Book.Repasitory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +31,12 @@ namespace Practice8_Book
         {
             services.AddDbContext<AppBookContext>(o => { o.UseSqlServer(Configuration.GetConnectionString("BookA")); });
             services.AddControllers();
+            services.AddTransient<IRepasitory<Book>, BRepasitory<Book>>();
+            services.AddTransient<IRepasitory<Author>, BRepasitory<Author>>();
+            services.AddTransient<IRepasitory<Publications>, BRepasitory<Publications>>();
+            services.AddTransient<IRepasitory<Category>, BRepasitory<Category>>();
+            services.AddTransient<IRepasitory<BookAuthor>, BRepasitory<BookAuthor>>();
+            services.AddTransient<IRepasitory<BookCategory>, BRepasitory<BookCategory>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
