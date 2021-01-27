@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Practice8_Book.Models
 {
-    public class Book
+    public class Book : IHasidentity
     {
         public int Id { get; set; }
         public string Titele { get; set; }
