@@ -19,34 +19,55 @@ namespace Practice8_Book.Controllers
             this.repasitory = repasitory;
         }
         [HttpPost]
-        public void Create(Category category)
+        public string Create(Category category)
         {
-            repasitory.Insert(category);
+            var result = repasitory.Insert(category);
             repasitory.Save();
+            return category.Id + result;
         }
         [HttpGet("{id}")]
         public Category Get(int id)
         {
-            return repasitory.Get(id);
+            if (repasitory.GetAll().Where(c => c.Id == id).ToList().Count != 0)
+                return repasitory.Get(id);
+            return null;
         }
         [HttpGet]
         public List<Category> GetAll()
         {
             return repasitory.GetAll();
         }
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public string Delete(int id)
         {
-            repasitory.Delete(id);
-            repasitory.Save();
-            return "delete...";
+            if (repasitory.GetAll().Where(c => c.Id == id).ToList().Count != 0)
+            {
+                try
+                {
+                    var result = repasitory.Delete(id);
+                    repasitory.Save();
+                    return result;
+                }
+                catch
+                {
+                    return "There is a dependency for this category in Book-Category table ....";
+                }
+            }
+            return "Not found any category with this id for delete";
         }
         [HttpPut]
-        public Category Update(Category category)
+        public string Update(Category category)
         {
-            var end = repasitory.Update(category);
-            repasitory.Save();
-            return end;
+            try
+            {
+                var end = repasitory.Update(category);
+                repasitory.Save();
+                return end;
+            }
+            catch (Exception)
+            {
+                return " Not found any category with this id for update";
+            }
 
         }
     }

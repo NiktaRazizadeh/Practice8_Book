@@ -19,34 +19,56 @@ namespace Practice8_Book.Controllers
             this.repasitory = repasitory;
         }
         [HttpPost]
-        public void Create(Publications Publications)
+        public string Create(Publications Publications)
         {
-            repasitory.Insert(Publications);
+            var result = repasitory.Insert(Publications);
             repasitory.Save();
+            return Publications.Id + result;
         }
         [HttpGet("{id}")]
         public Publications Get(int id)
         {
-            return repasitory.Get(id);
+            if (repasitory.GetAll().Where(p => p.Id == id).ToList().Count != 0)
+                return repasitory.Get(id);
+            return null;
         }
         [HttpGet]
         public List<Publications> GetAll()
         {
             return repasitory.GetAll();
         }
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public string Delete(int id)
         {
-            repasitory.Delete(id);
-            repasitory.Save();
-            return "delete...";
+            if (repasitory.GetAll().Where(p => p.Id == id).ToList().Count != 0)
+            {
+                try
+                {
+                    var result = repasitory.Delete(id);
+                    repasitory.Save();
+                    return result;
+                }
+                catch
+                {
+                    return "There is a dependency for this publication in Book table ....";
+
+                }
+            }
+            return "Not found any publication with this id for delete";
         }
-        [HttpPut]
-        public Publications Update(Publications publications)
+            [HttpPut]
+        public string Update(Publications publications)
         {
-            var end = repasitory.Update(publications);
-            repasitory.Save();
-            return end;
+            try
+            {
+                var end = repasitory.Update(publications);
+                repasitory.Save();
+                return end;
+            }
+            catch (Exception)
+            {
+                return " Not found any publication with this id for update";
+            }
         }
     }
 }

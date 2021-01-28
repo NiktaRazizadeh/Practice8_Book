@@ -15,11 +15,12 @@ namespace Practice8_Book.Repasitory
         {
             this.dBContext = dBContext;
         }
-        public void Delete(int id)
+        public string Delete(int id)
         {
-            var item = this.dBContext.Set<T>().FirstOrDefault(x => x.Id == id);
-            this.dBContext.Remove(item);
-
+            var item = dBContext.Set<T>().FirstOrDefault(x => x.Id == id);
+            if (item == null) return "not found";
+            dBContext.Remove(item);
+            return item.Id + " delete...";
         }
 
         public T Get(int id)
@@ -32,15 +33,16 @@ namespace Practice8_Book.Repasitory
             return this.dBContext.Set<T>().ToList();
         }
 
-        public void Insert(T item)
+        public string Insert(T item)
         {
             this.dBContext.Add<T>(item);
+            return " added...";
         }
 
-        public T Update(T item)
+        public string Update(T item)
         {
             this.dBContext.Update(item);
-            return item;
+            return item.Id + " updated...";
         }
         public void Save()
         {

@@ -19,15 +19,18 @@ namespace Practice8_Book.Controllers
             this.repasitory = repasitory;
         }
         [HttpPost]
-        public void Create(Book book)
+        public string Create(Book book)
         {
-            repasitory.Insert(book);
+            var result = repasitory.Insert(book);
             repasitory.Save();
+            return book.Id + result;
         }
         [HttpGet("{id}")]
         public Book Get(int id)
         {
-            return repasitory.Get(id);
+            if (repasitory.GetAll().Where(b => b.Id == id).ToList().Count != 0)
+                return repasitory.Get(id);
+            return null;
         }
         [HttpGet]
         public List<Book> GetAll()
@@ -35,18 +38,38 @@ namespace Practice8_Book.Controllers
             return repasitory.GetAll();
         }
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public string Delete(int id)
         {
-            repasitory.Delete(id);
-            repasitory.Save();
+            if (repasitory.GetAll().Where(b => b.Id == id).ToList().Count != 0)
+            {
+                try
+                {
+                    var result = repasitory.Delete(id);
+                    repasitory.Save();
+                    return result;
+                }
+                catch
+                {
+                    return "There is a dependency for this book in Book-Category table or Author-Book table....";
+
+                }
+            }
+            return "Not found any book with this id for delete";
 
         }
         [HttpPut]
-        public Book Update(Book book)
+        public string Update(Book book)
         {
-            var end = repasitory.Update(book);
-            repasitory.Save();
-            return end;
+            try
+            {
+                var end = repasitory.Update(book);
+                repasitory.Save();
+                return end;
+            }
+            catch (Exception)
+            {
+                return " Not found any book with this id for update";
+            }
 
         }
         //[HttpPost("Search")]

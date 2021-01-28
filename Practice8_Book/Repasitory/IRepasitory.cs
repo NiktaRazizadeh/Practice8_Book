@@ -9,9 +9,9 @@ namespace Practice8_Book.Repasitory
     {
         T Get(int id);
         List<T> GetAll();
-        void Insert(T item);
-        T Update(T item);
-        void Delete(int id);
+        string Insert(T item);
+        string Update(T item);
+        string Delete(int id);
         void Save();
     }
 }

@@ -19,34 +19,56 @@ namespace Practice8_Book.Controllers
             this.repasitory = repasitory;
         }
         [HttpPost]
-        public void Create(Author author)
+        public string Create(Author author)
         {
-             repasitory.Insert(author);
+            var result = repasitory.Insert(author);
             repasitory.Save();
+            return author.Id + result;
         }
         [HttpGet("{id}")]
         public Author Get(int id)
         {
-            return repasitory.Get(id);
+            if(repasitory.GetAll().Where(a => a.Id == id).ToList().Count != 0)
+                return repasitory.Get(id);
+            return null;
         }
         [HttpGet]
         public List<Author> GetAll()
         {
             return repasitory.GetAll();
         }
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public string Delete(int id)
         {
-            repasitory.Delete(id);
-            repasitory.Save();
-            return "delete...";
+            if (repasitory.GetAll().Where(a => a.Id == id).ToList().Count != 0)
+            {
+                try
+                {
+                    var result = repasitory.Delete(id);
+                    repasitory.Save();
+                    return result;
+                }
+                catch
+                {
+                    return "There is a dependency for this author in Author-Book table ....";
+
+                }
+            }
+            return "Not found any author with this id for delete";
         }
         [HttpPut]
-        public Author Update(Author author)
+        public string Update(Author author)
         {
-            var end = repasitory.Update(author);
-            repasitory.Save();
-            return end;
+            try
+            {
+                var end = repasitory.Update(author);
+                repasitory.Save();
+                return end;
+            }
+            catch (Exception)
+            {
+                return " Not found any author with this id for update";
+            }
         }
     }
 }
